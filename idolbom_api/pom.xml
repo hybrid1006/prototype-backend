@@ -140,6 +140,25 @@
 			<version>5.7.1</version> <!-- 최신 버전으로 변경 -->
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Spring Boot 기본 스타터 (Logback 제거) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Log4j2 스타터 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
