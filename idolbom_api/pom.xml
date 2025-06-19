@@ -159,6 +159,11 @@
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 
+		<!-- Micrometer Prometheus Registry -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -193,17 +198,7 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
-			<!-- Java 컴파일용 -->
-<!--			<plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--				<artifactId>maven-compiler-plugin</artifactId>-->
-<!--				<version>3.8.1</version>-->
-<!--				<configuration>-->
-<!--					<source>${java.version}</source>-->
-<!--					<target>${java.version}</target>-->
-<!--					<generatedSourcesDirectory>target/generated-sources/java</generatedSourcesDirectory>-->
-<!--				</configuration>-->
-<!--			</plugin>-->
+
 		</plugins>
 	</build>
 </project>

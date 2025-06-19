@@ -1,61 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="INFO" monitorInterval="30">
+
     <Properties>
         <Property name="LOG_PATH">logs</Property>
-        <Property name="DEFAULT_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] %5p ${sys:PID} --- [%15.15t] %-40.40c{1.} : %m%n%xwEx</Property>
+        <Property name="LOG_PATTERN">%style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{cyan} [%highlight{%p}] %style{%t}{magenta} %style{%c{1.}}{blue} - %m%n</Property>
         <Property name="COLOR_PATTERN">[%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint}] %clr{%5p} %clr{${sys:PID}}{magenta} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c}{cyan} %clr{:}{faint} %m%n%xwEx</Property>
-        <Property name="TEST_PATTERN">%d %5p [%c] %m%n</Property>
     </Properties>
 
     <Appenders>
+
+        <!-- ✅ 콘솔 (컬러 로그) -->
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="${COLOR_PATTERN}"/>
+            <PatternLayout pattern="${LOG_PATTERN}" disableAnsi="false"/>
         </Console>
-        <File name="File" fileName="app.log">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
-        </File>
+
+        <!-- ✅ 일반 로그 파일 -->
+        <RollingFile name="FileAppender"
+                     fileName="${LOG_PATH}/app.log"
+                     filePattern="${LOG_PATH}/app-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+        </RollingFile>
+
+        <!-- ✅ 성능 로그 (성능 전용 로그 파일) -->
+        <RollingFile name="PerfAppender"
+                     fileName="${LOG_PATH}/performance.log"
+                     filePattern="${LOG_PATH}/performance-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %m%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+        <!-- ✅ JSON 로그 (Loki, ELK 등 대응) -->
+        <RollingFile name="JsonFileAppender"
+                     fileName="${LOG_PATH}/json-log.log"
+                     filePattern="${LOG_PATH}/json-log-%d{yyyy-MM-dd}.log.gz">
+            <JsonLayout complete="false" compact="true" eventEol="true" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
     </Appenders>
+
     <Loggers>
+
+        <!-- ✅ 성능 전용 로거 -->
+        <Logger name="perf" level="info" additivity="false">
+            <AppenderRef ref="PerfAppender" />
+        </Logger>
+
+        <!-- ✅ JSON 전용 로거 -->
+        <Logger name="json" level="info" additivity="false">
+            <AppenderRef ref="JsonFileAppender" />
+        </Logger>
+
+        <!-- ✅ 전체 시스템 로그 -->
         <Root level="info">
-            <AppenderRef ref="Console"/>
-<!--            <AppenderRef ref="File"/>-->
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="FileAppender" />
         </Root>
-
-        <!-- springframework logger -->
-        <Logger name="org.springframework" level="INFO" additivity="false">
-            <AppenderRef ref="ConsoleAppender" />
-            <!--<AppenderRef ref="RollingFileAppender"/>-->
-        </Logger>
-
-        <!-- jdbc logger -->
-        <Logger name="jdbc.sqlonly" level="INFO" additivity="false">
-            <AppenderRef ref="ConsoleAppender"/>
-            <!--<AppenderRef ref="RollingFileAppender"/>-->
-        </Logger>
-
-        <Logger name="jdbc.sqltiming" level="INFO" additivity="false">
-            <AppenderRef ref="ConsoleAppender"/>
-            <!--<AppenderRef ref="RollingFileAppender"/>-->
-        </Logger>
-
-        <Logger name="jdbc.resultsettable" level="INFO" additivity="false">
-            <AppenderRef ref="ConsoleAppender"/>
-            <!--<AppenderRef ref="RollingFileAppender"/>-->
-        </Logger>
-
-        <Logger name="jdbc.audit" level="OFF" additivity="false">
-            <AppenderRef ref="ConsoleAppender"/>
-            <!--<AppenderRef ref="RollingFileAppender"/>-->
-        </Logger>
-
-        <Logger name="jdbc.resultset" level="INFO" additivity="false">
-            <AppenderRef ref="ConsoleAppender"/>
-            <!--<AppenderRef ref="RollingFileAppender"/>-->
-        </Logger>
-
-        <Logger name="jdbc.connection" level="INFO" additivity="false">
-            <AppenderRef ref="ConsoleAppender"/>
-            <!--<AppenderRef ref="RollingFileAppender"/>-->
-        </Logger>
     </Loggers>
 </Configuration>

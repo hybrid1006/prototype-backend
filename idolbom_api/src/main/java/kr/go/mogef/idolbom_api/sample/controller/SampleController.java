@@ -10,17 +10,15 @@ import kr.go.mogef.idolbom_api.sample.dto.PostSampleResponseDto;
 import kr.go.mogef.idolbom_api.sample.exception.SampleException;
 import kr.go.mogef.idolbom_api.sample.service.SampleService;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 
-
+@Log4j2
 @RestController
 @RequestMapping("/sample")
 @RequiredArgsConstructor
 public class SampleController {
 
-    private static final Logger logger = LogManager.getLogger(SampleController.class);
 
     private final SampleService sampleService;
 
@@ -37,7 +35,7 @@ public class SampleController {
         try {
             return ApiResponse.success(sampleService.getMemberQuerydsl(dto));
         } catch (SampleException e) {
-            logger.error("{} {} : {}",e.getClass(), e.getError().getCode(), e.getError().getMessage());
+            log.error("{} {} : {}",e.getClass(), e.getError().getCode(), e.getError().getMessage());
             return ApiResponse.error(e.getError().getCode(), e.getError().getMessage());
         }
     }
