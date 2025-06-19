@@ -1,10 +1,10 @@
 package kr.go.mogef.idolbom_api.sample.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class PostSampleRequestDto {
     private Long id;
