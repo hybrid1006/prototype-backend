@@ -8,6 +8,7 @@ import kr.go.mogef.idolbom_api.sample.dto.GetSampleResponseDto;
 import kr.go.mogef.idolbom_api.sample.dto.PostSampleRequestDto;
 import kr.go.mogef.idolbom_api.sample.dto.PostSampleResponseDto;
 import kr.go.mogef.idolbom_api.sample.exception.SampleException;
+import kr.go.mogef.idolbom_api.sample.mapper.SampleMapper;
 import kr.go.mogef.idolbom_api.sample.service.SampleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class SampleController {
 
-
     private final SampleService sampleService;
+    private final SampleMapper sampleMapper;
 
     @Operation(summary = "get 방식 예제", description = "LOGIN ID를 통해 정보를 조회합니다.")
     @GetMapping("/get-sample/{loginId}")
@@ -33,7 +34,9 @@ public class SampleController {
     @PostMapping("/get-sample")
     public ApiResponse<GetSampleResponseDto> getSample(@RequestBody GetSampleRequestDto dto) {
         try {
-            return ApiResponse.success(sampleService.getMemberQuerydsl(dto));
+            GetSampleResponseDto result = sampleMapper.selectMember(dto.getLoginId());
+            return ApiResponse.success(result);
+//            return ApiResponse.success(sampleService.getMemberQuerydsl(dto));
         } catch (SampleException e) {
             log.error("{} {} : {}",e.getClass(), e.getError().getCode(), e.getError().getMessage());
             return ApiResponse.error(e.getError().getCode(), e.getError().getMessage());

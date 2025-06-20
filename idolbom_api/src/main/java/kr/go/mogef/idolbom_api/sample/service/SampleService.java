@@ -39,6 +39,7 @@ public class SampleService {
                 .id(member.getId())
                 .name(member.getName())
                 .loginId(member.getLoginId())
+                .hp(member.getHp())
                 .build();
     }
 

@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/idolbom_api.iml" filepath="$PROJECT_DIR$/.idea/idolbom_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/idolbom_api/idolbom_api.iml" filepath="$PROJECT_DIR$/idolbom_api/idolbom_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/prototype-backend.iml" filepath="$PROJECT_DIR$/.idea/prototype-backend.iml" />
     </modules>
   </component>
 </project>
