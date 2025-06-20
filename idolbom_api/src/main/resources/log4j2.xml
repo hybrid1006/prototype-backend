@@ -2,7 +2,7 @@
 <Configuration status="INFO" monitorInterval="30">
 
     <Properties>
-        <Property name="LOG_PATH">logs</Property>
+        <Property name="LOG_PATH">C:/monitoring/logs</Property>
         <Property name="LOG_PATTERN">%style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{cyan} [%highlight{%p}] %style{%t}{magenta} %style{%c{1.}}{blue} - %m%n</Property>
         <Property name="COLOR_PATTERN">[%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint}] %clr{%5p} %clr{${sys:PID}}{magenta} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c}{cyan} %clr{:}{faint} %m%n%xwEx</Property>
     </Properties>
@@ -12,10 +12,14 @@
         <!-- ✅ 콘솔 (컬러 로그) -->
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${LOG_PATTERN}" disableAnsi="false"/>
+            <Filters>
+                <!-- logger 이름으로 필터링: prometheusLogger 제외 -->
+                <Filter type="LoggerFilter" onMatch="DENY" onMismatch="NEUTRAL" logger="prometheusLogger" />
+            </Filters>
         </Console>
 
         <!-- ✅ 일반 로그 파일 -->
-        <RollingFile name="FileAppender"
+        <RollingFile name="AppFile"
                      fileName="${LOG_PATH}/app.log"
                      filePattern="${LOG_PATH}/app-%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
@@ -25,21 +29,22 @@
             </Policies>
         </RollingFile>
 
-        <!-- ✅ 성능 로그 (성능 전용 로그 파일) -->
-        <RollingFile name="PerfAppender"
-                     fileName="${LOG_PATH}/performance.log"
-                     filePattern="${LOG_PATH}/performance-%d{yyyy-MM-dd}.log.gz">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %m%n" />
-            <Policies>
-                <TimeBasedTriggeringPolicy />
-            </Policies>
-        </RollingFile>
+        <!-- Prometheus 요청 전용 로그 파일 -->
+<!--        <RollingFile name="PrometheusFile" fileName="${LOG_PATH}/prometheus.log"-->
+<!--                     filePattern="logs/prometheus-%d{yyyy-MM-dd}.log.gz">-->
+<!--            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%t] %c{1} - %msg%n"/>-->
+<!--            <Policies>-->
+<!--                <TimeBasedTriggeringPolicy interval="1"/>-->
+<!--            </Policies>-->
+<!--        </RollingFile>-->
+
 
         <!-- ✅ JSON 로그 (Loki, ELK 등 대응) -->
         <RollingFile name="JsonFileAppender"
                      fileName="${LOG_PATH}/json-log.log"
                      filePattern="${LOG_PATH}/json-log-%d{yyyy-MM-dd}.log.gz">
             <JsonLayout complete="false" compact="true" eventEol="true" />
+            <PatternLayout pattern="${LOG_PATTERN}" disableAnsi="false"/>
             <Policies>
                 <TimeBasedTriggeringPolicy />
             </Policies>
@@ -48,6 +53,11 @@
     </Appenders>
 
     <Loggers>
+
+        <!-- Prometheus actuator 응답 처리 로그 제외 -->
+        <Logger name="org.springframework.web.servlet.mvc.method.annotation.HttpEntityMethodProcessor" level="INFO" additivity="false"/>
+        <Logger name="org.springframework.web.servlet.DispatcherServlet" level="INFO" additivity="false"/>
+
 
         <!-- ✅ 성능 전용 로거 -->
         <Logger name="perf" level="info" additivity="false">
@@ -59,10 +69,23 @@
             <AppenderRef ref="JsonFileAppender" />
         </Logger>
 
+        <Logger name="org.hibernate.SQL" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AppFile"/>
+        </Logger>
+        <Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AppFile"/>
+        </Logger>
+
+
         <!-- ✅ 전체 시스템 로그 -->
         <Root level="info">
             <AppenderRef ref="Console" />
-            <AppenderRef ref="FileAppender" />
+            <AppenderRef ref="AppFile" />
+<!--            <AppenderRef ref="PrometheusFile" />-->
+<!--            <AppenderRef ref="JsonFileAppender" />-->
         </Root>
+
     </Loggers>
 </Configuration>
