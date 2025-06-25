@@ -30,13 +30,13 @@
         </RollingFile>
 
         <!-- Prometheus 요청 전용 로그 파일 -->
-<!--        <RollingFile name="PrometheusFile" fileName="${LOG_PATH}/prometheus.log"-->
-<!--                     filePattern="logs/prometheus-%d{yyyy-MM-dd}.log.gz">-->
-<!--            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%t] %c{1} - %msg%n"/>-->
-<!--            <Policies>-->
-<!--                <TimeBasedTriggeringPolicy interval="1"/>-->
-<!--            </Policies>-->
-<!--        </RollingFile>-->
+        <!--        <RollingFile name="PrometheusFile" fileName="${LOG_PATH}/prometheus.log"-->
+        <!--                     filePattern="logs/prometheus-%d{yyyy-MM-dd}.log.gz">-->
+        <!--            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%t] %c{1} - %msg%n"/>-->
+        <!--            <Policies>-->
+        <!--                <TimeBasedTriggeringPolicy interval="1"/>-->
+        <!--            </Policies>-->
+        <!--        </RollingFile>-->
 
 
         <!-- ✅ JSON 로그 (Loki, ELK 등 대응) -->
@@ -60,32 +60,38 @@
 
 
         <!-- ✅ 성능 전용 로거 -->
-        <Logger name="perf" level="info" additivity="false">
+        <Logger name="perf" level="INFO" additivity="false">
             <AppenderRef ref="PerfAppender" />
         </Logger>
 
         <!-- ✅ JSON 전용 로거 -->
-        <Logger name="json" level="info" additivity="false">
+        <Logger name="json" level="INFO" additivity="false">
             <AppenderRef ref="JsonFileAppender" />
         </Logger>
 
-        <Logger name="org.hibernate.SQL" level="debug" additivity="false">
+        <Logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="AppFile"/>
         </Logger>
-        <Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="trace" additivity="false">
+        <Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="AppFile"/>
         </Logger>
+
+
+        <!-- SQL 로거 -->
+        <Logger name="jdbc.sqlonly" level="DEBUG" additivity="false">
+            <appender-ref ref="Console" />
+        </Logger>
+
 
 
         <!-- ✅ 전체 시스템 로그 -->
-        <Root level="info">
+        <Root level="INFO">
             <AppenderRef ref="Console" />
             <AppenderRef ref="AppFile" />
-<!--            <AppenderRef ref="PrometheusFile" />-->
-<!--            <AppenderRef ref="JsonFileAppender" />-->
+            <!--            <AppenderRef ref="PrometheusFile" />-->
+            <!--            <AppenderRef ref="JsonFileAppender" />-->
         </Root>
-
     </Loggers>
 </Configuration>

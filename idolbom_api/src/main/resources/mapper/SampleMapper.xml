@@ -2,11 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kr.go.mogef.idolbom_api.sample.mapper.SampleMapper">
-    <select id="selectMember" parameterType="String" resultType="GetSampleResponseDto">
+    <select id="getMember" parameterType="String" resultType="GetSampleResponseDto">
+        /* kr.go.mogef.idolbom_api.sample.mapper.SampleMapper.getMember
+           사용자 조회
+        */
         SELECT *
         FROM tbl_member
         WHERE login_id = #{loginId}
-
     </select>
 </mapper>
 

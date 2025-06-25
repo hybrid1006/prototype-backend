@@ -3,20 +3,20 @@ spring:
     name: idolbom_api
 
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/idolbom
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mariadb://localhost:3306/idolbom
     username: root
     password: 1234
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
         show_sql: true
         dialect: org.hibernate.dialect.MariaDBDialect
-        use_sql_comments: true
+        #use_sql_comments: true
   output:
     ansi:
       enabled: always
@@ -25,7 +25,27 @@ server:
   port: 8080
 
 logging:
-  config: classpath:log4j2.xml
+  #config: classpath:log4j2.xml
+  level:
+    root: INFO
+    # 애플리케이션 로그
+    kr.go.mogef.idolbom_api: DEBUG
+    # MyBatis 매퍼 로그
+    kr.go.mogef.idolbom_api.sample.mapper: DEBUG
+    # log4jdbc 로그 (파라미터 포함)
+    jdbc.sqlonly: OFF
+    jdbc.sqltiming: INFO
+    jdbc.audit: OFF
+    jdbc.resultset: OFF
+    jdbc.resultsettable: OFF
+    # Hibernate 로그
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+
+
+
+
 #  level:
 #    root: INFO
 #    org.springframework.web: DEBUG
@@ -48,3 +68,4 @@ mybatis:
   type-aliases-package: kr.go.mogef.idolbom_api.sample.dto
   configuration:
     map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl

@@ -8,6 +8,7 @@ import kr.go.mogef.idolbom_api.sample.dto.GetSampleRequestDto;
 import kr.go.mogef.idolbom_api.sample.dto.GetSampleResponseDto;
 import kr.go.mogef.idolbom_api.sample.exception.SampleError;
 
+import kr.go.mogef.idolbom_api.sample.mapper.SampleMapper;
 import kr.go.mogef.idolbom_api.sample.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class SampleService {
 
     private final MemberRepository memberRepository;
+    private final SampleMapper sampleMapper;
 
     public GetSampleResponseDto getMemberInfo(String loginId) {
         Member member = Optional.ofNullable(memberRepository.findByLoginId(loginId)).orElseThrow(() -> new SampleException(SampleError.USER_NOT_FOUND));
@@ -43,6 +45,12 @@ public class SampleService {
                 .build();
     }
 
+    public GetSampleResponseDto getMember(GetSampleRequestDto dto) {
+        GetSampleResponseDto result = sampleMapper.getMember(dto.getLoginId());
+        return result;
+    }
+
+
     @Transactional
     public PostSampleResponseDto save(PostSampleRequestDto dto) {
         Optional<Member> opt = Optional.ofNullable(memberRepository.findByLoginId(dto.getLoginId()));
@@ -62,6 +70,7 @@ public class SampleService {
                 );
         return PostSampleResponseDto.builder().id(memberEntity.getId()).build();
     }
+
 
 
 }
